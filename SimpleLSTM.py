@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy
 
 class SimpleLSTM:
-    def __init__(self, max_len=50, hidden_layer=1280, num_classes=2, sequence_length):
+    def __init__(self, sequence_length, max_len=50, hidden_layer=1280, num_classes=2):
         self.sequence_length = sequence_length
         self.hidden_layer = hidden_layer
         self.n_class = num_classes

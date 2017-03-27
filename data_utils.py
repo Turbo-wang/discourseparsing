@@ -19,7 +19,7 @@ class DataUtil:
                 pos_list2 = arg2["POS"]
                 sen_list1 = arg1["Word"]
                 sen_list2 = arg2["Word"]
-                connect = ar
+                connect = 
                 self.sentence_list1.append(sen_list1)
                 self.sentence_list2.append(sen_list2)
                 self.pos_list1.append(pos_list1)
@@ -70,7 +70,27 @@ class DataUtil:
                     x2_sen.append(np.zeros(300), dtype="float32")
             X2_inputs_batch.append(x2_sen)
 
-
+    def construct_batch_matrix(self, _X_indexs, _X_others, _Y, xid, batch_size):
+        X_indexs = []
+        X_others = []
+        Y = []
+        for i in xid:
+            X_indexs.append(_X_indexs[i])
+            X_others.append(_X_others[i])
+            Y.append(_Y[i])
+        assert len(X_indexs) == len(Y) and len(X_others) == len(X_indexs)
+        X_indexs_batch_list = []
+        X_others_batch_list = []
+        Y_batch_list = []
+        total_batch = int(len(Y)/batch_size)
+        for i in range(int(total_batch)):
+            X_indexs_batch_list.append(X_indexs[i * batch_size: (i+1) * batch_size])
+            X_others_batch_list.append(X_others[i * batch_size: (i+1) * batch_size])
+            Y_batch_list.append(Y[i * batch_size: (i+1) * batch_size])
+        X_indexs_batch_list.append(X_indexs[(i+1)*batch_size:])
+        X_others_batch_list.append(X_others[(i+1)*batch_size:])
+        Y_batch_list.append(Y[(i+1)*batch_size:])
+        return X_indexs_batch_list, X_others_batch_list, Y_batch_list
 
 
 
