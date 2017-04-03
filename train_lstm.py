@@ -7,8 +7,9 @@ import time
 import datetime
 from SimpleLSTM import SimpleLSTM
 import sklearn as sk
-from data_xuejie import WE_process
-from data_xuejie import embedding_process
+# from data_xuejie import WE_process
+# from data_xuejie import embedding_process
+from data_utils import DataUtil
 
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
@@ -52,7 +53,13 @@ def train(x1_inputs_batch, x2_inputs_batch, y):
                 print("avg_loss: ", avg_loss, " avg_accuracy: ", avg_accuracy)
 
 if __name__ == '__main__':
-    train_file = "one_vs_others_standard/train_sec_02_20_EntRel_to_Expansion.json"
-    WE,pos_WE=WE_process()
-    X_train_1,X_train_2,X_train_pos_1,X_train_pos_2,y_train=embedding_process(train_file)
-    print X_train_1[0]
+    # train_file = "one_vs_others_standard/train_sec_02_20_EntRel_to_Expansion.json"
+    # WE,pos_WE=WE_process()
+    # X_train_1,X_train_2,X_train_pos_1,X_train_pos_2,y_train=embedding_process(train_file)
+    # print X_train_1[0]
+    d = DataUtil()
+    d.get_sentence_pairs("dev_sec_00_01.json", "one_vs_others_standard/Comparison_vs_others")
+    x1_inputs, x2_inputs, y_inputs = d.get_train_data()
+    batch_size = 128
+    x1_inputs_batch, x2_inputs_batch, y_inputs_batch = d.construct_batch_matrix(x1_inputs, x2_inputs, y_inputs, batch_size)
+    print x1_inputs_batch[0][0]

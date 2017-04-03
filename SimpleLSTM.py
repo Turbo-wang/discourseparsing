@@ -8,10 +8,10 @@ class SimpleLSTM:
         self.n_class = num_classes
         # Placeholders for input, output and dropout
         # self.x1_indexs = tf.placeholder(tf.int32, [None, sequence_length], name="x1_indexs")
-        self.x1_inputs = tf.placeholder(tf.float32, [None, sequence_length, 46], name="x1_pos")
+        self.x1_inputs = tf.placeholder(tf.float32, [None, sequence_length, 300], name="x1_pos")
 
         # self.x2_indexs = tf.placeholder(tf.int32, [None, sequence_length], name="x2_indexs")
-        self.x2_inputs = tf.placeholder(tf.float32, [None, sequence_length, 46], name="x2_pos")
+        self.x2_inputs = tf.placeholder(tf.float32, [None, sequence_length, 300], name="x2_pos")
         self.y = tf.placeholder(tf.float32, [None, num_classes], name="y")
         # self.dropout_keep_prob = tf.placeholder(tf.float32, name="dropout_keep_prob")
         # self.lr = tf.placeholder(tf.float32, name="learning_rate")
