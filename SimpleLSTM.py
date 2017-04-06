@@ -30,12 +30,12 @@ class SimpleLSTM:
         #     self.embedded_chars2 = tf.nn.embedding_lookup(self.W, self.x2_indexs)
         #     self.em_other2 = tf.concat(2, [self.embedded_chars, self.x2_pos])
         #     self.embedded_chars_expanded2 = tf.expand_dims(self.em_other2, -1)
-        weights = {
-                   'out': tf.Variable(tf.random_normal([self.n_hidden, self.n_class]))
-               }
-        biases = {
-                   'out': tf.Variable(tf.random_normal([self.n_class]))
-               }
+        # weights = {
+        #            'out': tf.Variable(tf.random_normal([self.n_hidden, self.n_class]))
+        #        }
+        # biases = {
+        #            'out': tf.Variable(tf.random_normal([self.n_class]))
+        #        }
     # def RNN(x, weights, biases):
 
         # Prepare data shape to match `rnn` function requirements
@@ -46,14 +46,15 @@ class SimpleLSTM:
         x1 = tf.transpose(self.x1_inputs, [1, 0, 2])
         # Reshaping to (n_steps*batch_size, n_input)
         x1 = tf.reshape(x1, [-1, self.sequence_length])
+        print x1.get_shape()
         # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
         x1 = tf.split(x1, self.sequence_length, 0)
 
         # Define a lstm cell with tensorflow
-        lstm_cell1 = rnn.BasicLSTMCell(self.n_hidden, forget_bias=1.0)
-
+        # lstm_cell1 = rnn.BasicLSTMCell(self.n_hidden, forget_bias=1.0)
+        lstm_cell = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer , forget_bias=1.0)
         # Get lstm cell output
-        outputs1, states1 = rnn.static_rnn(lstm_cell, x1, dtype=tf.float32)
+        outputs1, states1 = tf.contrib.rnn.static_rnn(lstm_cell, x1, dtype=tf.float32)
 
         x2 = tf.transpose(self.x2_inputs, [1, 0, 2])
         # Reshaping to (n_steps*batch_size, n_input)
@@ -62,10 +63,10 @@ class SimpleLSTM:
         x2 = tf.split(x2, self.sequence_length, 0)
 
         # Define a lstm cell with tensorflow
-        lstm_cell2 = rnn.BasicLSTMCell(self.n_hidden, forget_bias=1.0)
+        lstm_cell2 = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer, forget_bias=1.0)
 
         # Get lstm cell output
-        outputs2, states2 = rnn.static_rnn(lstm_cell, x2, dtype=tf.float32)
+        outputs2, states2 = tf.contrib.rnn.static_rnn(lstm_cell, x2, dtype=tf.float32)
 
 
         W1 = tf.Variable(tf.random_normal([self.n_hidden, self.n_hidden]))

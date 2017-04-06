@@ -1,5 +1,6 @@
 import json, os
 import gensim
+import numpy as np
 from collections import Counter
 
 class DataUtil:
@@ -32,7 +33,7 @@ class DataUtil:
 
     def get_train_data(self):
         self.load_word2vec("google_vectors.bin")
-        self.get_sentence_pairs()
+        # self.get_sentence_pairs()
         self.batch_size = 128
         X1_inputs_list = []
         X2_inputs_list = []
@@ -47,10 +48,10 @@ class DataUtil:
                 if word in self.model:
                     x1_sen.append(self.model[word])
                 else:
-                    x1_sen.append(np.zeros(300), dtype="float32")
+                    x1_sen.append(np.zeros(300, dtype="float32"))
             if not flag:
                 for i in range(len(x1_sen), 50):
-                    x1_sen.append(np.zeros(300), dtype="float32")
+                    x1_sen.append(np.zeros(300, dtype="float32"))
             X1_inputs_list.append(x1_sen)
             x2_sen = []
             flag = False
@@ -61,12 +62,12 @@ class DataUtil:
                 if word in self.model:
                     x2_sen.append(self.model[word])
                 else:
-                    x2_sen.append(np.zeros(300), dtype="float32")
+                    x2_sen.append(np.zeros(300, dtype="float32"))
             if not flag:
                 for i in range(len(x2_sen), 50):
-                    x2_sen.append(np.zeros(300), dtype="float32")
+                    x2_sen.append(np.zeros(300, dtype="float32"))
             X2_inputs_list.append(x2_sen)
-            if labe == "1":
+            if label == "1":
                 Y_inputs_list.append(np.array([1, 0], dtype='float32'))
             else:
                 Y_inputs_list.append(np.array([0, 1], dtype='float32'))
@@ -85,7 +86,7 @@ class DataUtil:
         X1_batch_list = []
         X2_batch_list = []
         Y_batch_list = []
-        total_batch = int(len(_Y)/batch_size)
+        total_batch = int(len(Y)/batch_size)
         for i in range(int(total_batch)):
             X1_batch_list.append(X1_indexs[i * batch_size: (i+1) * batch_size])
             X2_batch_list.append(X2_indexs[i * batch_size: (i+1) * batch_size])
@@ -98,8 +99,9 @@ class DataUtil:
 
 
     def load_word2vec(self, file_name):
-        self.model = gensim.models.Word2Vec.load_word2vec_format(file_name, binary=True)
-
+        print "load google models"
+        # self.model = gensim.models.KeyedVectors.load_word2vec_format(file_name, binary=True)
+        self.model = {} 
     # def generate_xxy(self, json_list):
     #     X_indexs = []
     #     X_pos = []

@@ -62,4 +62,4 @@ if __name__ == '__main__':
     x1_inputs, x2_inputs, y_inputs = d.get_train_data()
     batch_size = 128
     x1_inputs_batch, x2_inputs_batch, y_inputs_batch = d.construct_batch_matrix(x1_inputs, x2_inputs, y_inputs, batch_size)
-    print x1_inputs_batch[0][0]
+    train(x1_inputs_batch, x2_inputs_batch, y_inputs_batch)
