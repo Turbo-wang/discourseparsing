@@ -1,5 +1,5 @@
 import tensorflow as tf
-import numpy
+import numpy as np
 
 class SimpleLSTM:
     def __init__(self, sequence_length, max_len=50, hidden_layer=1280, num_classes=2):
@@ -46,15 +46,8 @@ class SimpleLSTM:
         x1 = tf.transpose(self.x1_inputs, [1, 0, 2])
         # Reshaping to (n_steps*batch_size, n_input)
         x1 = tf.reshape(x1, [-1, self.sequence_length])
-        print x1.get_shape()
         # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
         x1 = tf.split(x1, self.sequence_length, 0)
-
-        # Define a lstm cell with tensorflow
-        # lstm_cell1 = rnn.BasicLSTMCell(self.n_hidden, forget_bias=1.0)
-        lstm_cell = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer , forget_bias=1.0)
-        # Get lstm cell output
-        outputs1, states1 = tf.contrib.rnn.static_rnn(lstm_cell, x1, dtype=tf.float32)
 
         x2 = tf.transpose(self.x2_inputs, [1, 0, 2])
         # Reshaping to (n_steps*batch_size, n_input)
@@ -62,20 +55,34 @@ class SimpleLSTM:
         # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
         x2 = tf.split(x2, self.sequence_length, 0)
 
-        # Define a lstm cell with tensorflow
-        lstm_cell2 = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer, forget_bias=1.0)
+        with tf.variable_scope('lstm2'):
+            self.lstm_cell2 = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer, forget_bias=1.0)
 
         # Get lstm cell output
-        outputs2, states2 = tf.contrib.rnn.static_rnn(lstm_cell, x2, dtype=tf.float32)
+            self.outputs2, self.states2 = tf.contrib.rnn.static_rnn(self.lstm_cell2, x2, dtype=tf.float32)
+        # Define a lstm cell with tensorflow
+        # lstm_cell1 = rnn.BasicLSTMCell(self.n_hidden, forget_bias=1.0)
+        with tf.variable_scope("lstm1"):
+            self.lstm_cell = tf.contrib.rnn.BasicLSTMCell(self.hidden_layer , forget_bias=1.0)
+        # Get lstm cell output
+            self.outputs1, self.states1 = tf.contrib.rnn.static_rnn(self.lstm_cell, x1, dtype=tf.float32)
 
 
-        W1 = tf.Variable(tf.random_normal([self.n_hidden, self.n_hidden]))
-        W2 = tf.Variable(tf.random_normal([self.n_hidden, self.n_hidden]))
 
-        o1 = tf.matmul(tf.matmul(outputs1[-1], W1), tf.transpose(outputs2[-1]))
-        o2 = tf.matmul(tf.matmul(outputs2[-1], W2), tf.transpose(outputs2[-1]))
+        # Define a lstm cell with tensorflow
+
+
+
+        W1 = tf.Variable(tf.random_normal([self.hidden_layer, self.hidden_layer]))
+        W2 = tf.Variable(tf.random_normal([self.hidden_layer, self.hidden_layer]))
+
+        o1 = tf.matmul(tf.matmul(self.outputs1[-1], W1), tf.transpose(self.outputs2[-1]))
+        o2 = tf.matmul(tf.matmul(self.outputs1[-1], W2), tf.transpose(self.outputs2[-1]))
         # Linear activation, using rnn inner loop last output
-        if (o1-o2>0.3):
+        oo1 = tf.cast(o1, tf.float32)
+        oo2 = tf.cast(o2, tf.float32)
+        # if tf.cond(o1<o2, lambda x: o1, lambda x: o2):
+        if True:
             res = np.array([1, 0], dtype="float32")
         else:
             res = np.array([0, 1], dtype="float32")
